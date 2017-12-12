@@ -36,46 +36,33 @@ module.exports = function profile() {
 	router.use(bodyParser.urlencoded({ extended: true }));
 	router.use(csurf({ cookie: true }));
 	router.all('/', function(req, res) {
-    profileForm.handle(req, {
-	        success: function(form) {
-	        	var address = new User();
-	        	address.givenName = req.user.givenName;
-				address.surname = req.user.surname;
+		profileForm.handle(req, {
+ 			success: function(form) {
+ 				var address = new User();
+ 				address.givenName = req.user.name.givenName;
+ 				address.surname = req.user.name.familyName;
 				address.save(function(err) {
-				    if (err) {
-				        console.log(err);
-				    }
-				    res.json('Address added to DB');
-				});
-	            req.user.givenName = form.data.givenName;
-	            req.user.surname = form.data.surname;
-	            /*req.user.customData.streetAddress = form.data.streetAddress;
-	            req.user.customData.city = form.data.city;
-	            req.user.customData.state = form.data.state;
-	            req.user.customData.zip = form.data.zip;
-	            req.user.customData.save();*/
-	            req.user.save(function(err) {
-	                if (err) {
-	                    if (err.developerMessage){
-	                        console.error(err);
-	                    }
-	                    renderForm(req, res, {
-	                        errors: [{
-	                            error: err.userMessage ||
-	                            err.message || String(err)
-	                        }]
-	                    });
-	                } else {
-	                    renderForm(req, res, {
-	                        saved: true
-	                    });
-	                }
-	            });
-	        },
-	        empty: function() {
-	            renderForm(req, res);
-	        }
-	    });
-	});
-    return router;
+					if (err) {
+ 						if (err.developerMessage){
+ 							console.error(err);
+ 						}
+ 						renderForm(req, res, {
+ 							errors: [{
+ 								error: err.userMessage ||
+ 								err.message || String(err)
+ 							}]
+ 						});
+ 					} else {
+ 						renderForm(req, res, {
+ 							saved: true
+ 						});
+ 					}
+ 				});          
+ 			},
+ 			empty: function() {
+ 				renderForm(req, res);
+ 			}
+ 		});
+  	  });
+	return router;
 };
